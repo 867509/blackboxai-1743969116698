@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Plesk API Actions</h1>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Create Client Card -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-800">Create New Client</h2>
+        </div>
+        <div class="px-6 py-4">
+            <form id="createClientForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email (Optional)</label>
+                    <input type="email" id="clientEmail" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <button type="button" onclick="createClient()"
+                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                    <i class="fas fa-user-plus mr-2"></i>Create Client
+                </button>
+            </form>
+            <div id="clientResult" class="mt-4 hidden p-3 bg-gray-50 rounded-md"></div>
+        </div>
+    </div>
+
+    <!-- Create Subscription Card -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-800">Create Subscription</h2>
+        </div>
+        <div class="px-6 py-4">
+            <form id="createSubscriptionForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Client ID*</label>
+                    <input type="text" id="subscriptionClientId" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Plan ID*</label>
+                    <input type="text" id="subscriptionPlanId" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Domain (Optional)</label>
+                    <input type="text" id="subscriptionDomain" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <button type="button" onclick="createSubscription()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    <i class="fas fa-server mr-2"></i>Create Subscription
+                </button>
+            </form>
+            <div id="subscriptionResult" class="mt-4 hidden p-3 bg-gray-50 rounded-md"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+function createClient() {
+    const email = document.getElementById('clientEmail').value;
+    fetch('/plesk/create-client', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultDiv = document.getElementById('clientResult');
+        resultDiv.innerHTML = `
+            <p class="font-medium">Client Created Successfully!</p>
+            <p class="text-sm mt-2">ID: ${data.plesk_client_id}</p>
+            <p class="text-sm">Username: ${data.username}</p>
+            <p class="text-sm">Password: ${data.password}</p>
+        `;
+        resultDiv.classList.remove('hidden');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function createSubscription() {
+    const clientId = document.getElementById('subscriptionClientId').value;
+    const planId = document.getElementById('subscriptionPlanId').value;
+    const domain = document.getElementById('subscriptionDomain').value;
+    
+    fetch('/plesk/create-subscription', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            client_id: clientId,
+            plan_id: planId,
+            domain: domain || undefined
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultDiv = document.getElementById('subscriptionResult');
+        resultDiv.innerHTML = `
+            <p class="font-medium">Subscription Created Successfully!</p>
+            <p class="text-sm mt-2">ID: ${data.subscription_id}</p>
+            <p class="text-sm">Domain: ${data.domain}</p>
+        `;
+        resultDiv.classList.remove('hidden');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
+{% endblock %}
