@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <!-- Stats Cards -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                <i class="fas fa-users text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500">Total Users</p>
+                <h3 class="text-2xl font-bold">{{ total_users }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                <i class="fas fa-server text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500">Active Subscriptions</p>
+                <h3 class="text-2xl font-bold">{{ active_subscriptions }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                <i class="fas fa-dollar-sign text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500">Total Revenue</p>
+                <h3 class="text-2xl font-bold">${{ "%.2f"|format(total_revenue) }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transactions -->
+<div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-800">Recent Transactions</h2>
+    </div>
+    <div class="divide-y divide-gray-200">
+        {% for tx in recent_transactions %}
+        <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
+            <div class="flex items-center">
+                <div class="p-2 rounded-full 
+                    {% if tx.amount > 0 %}bg-green-100 text-green-600{% else %}bg-red-100 text-red-600{% endif %} mr-4">
+                    <i class="fas 
+                        {% if tx.type == 'deposit' %}fa-arrow-down 
+                        {% elif tx.type == 'purchase' %}fa-shopping-cart 
+                        {% else %}fa-exchange-alt{% endif %}"></i>
+                </div>
+                <div>
+                    <p class="font-medium">{{ tx.type|capitalize }}</p>
+                    <p class="text-sm text-gray-500">
+                        User: {{ tx.username or tx.user_id }} • 
+                        {{ tx.timestamp|datetimeformat }}
+                    </p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="font-medium 
+                    {% if tx.amount > 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                    {% if tx.amount > 0 %}+{% endif %}${{ "%.2f"|format(tx.amount) }}
+                    {% if tx.currency %}{{ tx.currency|upper }}{% endif %}
+                </p>
+            </div>
+        </div>
+        {% else %}
+        <div class="px-6 py-8 text-center text-gray-500">
+            <i class="fas fa-exchange-alt text-4xl mb-2"></i>
+            <p>No recent transactions</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="px-6 py-3 bg-gray-50 text-right">
+        <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+            View all transactions
+        </a>
+    </div>
+</div>
+{% endblock %}
