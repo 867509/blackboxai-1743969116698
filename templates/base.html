@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plesk Accounts Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <!-- Navigation -->
+        <nav class="bg-blue-600 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <a href="/" class="text-xl font-bold">Plesk Accounts Admin</a>
+                <div class="flex space-x-4">
+                    <a href="/users" class="hover:bg-blue-700 px-3 py-2 rounded">Users</a>
+                    <a href="/offers" class="hover:bg-blue-700 px-3 py-2 rounded">Offers</a>
+                    <a href="/plesk" class="hover:bg-blue-700 px-3 py-2 rounded">Plesk</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-4 py-6">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-4">
+            <div class="container mx-auto px-4 text-center">
+                &copy; 2023 Plesk Accounts System. All rights reserved.
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
